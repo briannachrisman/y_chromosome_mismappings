@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --job-name=split_coverages
 #SBATCH --partition=owners
-#SBATCH --array=1-100
+#SBATCH --array=1-1000
 #SBATCH --output=/scratch/users/briannac/logs/split_coverages_%a.out
 #SBATCH --error=/scratch/users/briannac/logs/split_coverages_%a.err
 #SBATCH --time=40:00:00
@@ -44,7 +44,7 @@ split_func() {
 export -f split_func
 
 N=$((SLURM_ARRAY_TASK_ID -1))
-N=$(printf "%02g" $N)
+N=$(printf "%03g" $N)
 #parallel -j $SLURM_CPUS_PER_TASK split_func ::: *$N.unmapped.txt
 for f in *$N.unmapped.txt; do
     split_func $f

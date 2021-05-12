@@ -30,5 +30,10 @@ Performs a genome-wide association test on coverage at each loci vs sex.
 
 
 4.  ```covWAS.sh```: Runs a genome-wide (batched by chromsome) association between each loci & sex. Returns p-values and p-value related graphs.
-    - **Inputs**: ```intermediate_files/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.tsv.gz>```
-    - **Outputs**:  `results/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.pvals.txt>```, ```results/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.pvals_hist.svg>```, ```results/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.pvals_manhattan.svg>```
+    - **Inputs**: ```intermediate_files/covWAS/<REGION>.<IMPROPER|PROPER|UNMAPPED>.tsv.gz>```
+    - **Outputs**:  ```intermediate_files/covWAS/<IMPROPER|PROPER|UNMAPPED>.pvals.txt>```, ```results/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.pvals_hist.svg>```, ```results/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.pvals_manhattan.svg>```
+    
+    
+5. ```move_to_results.sh```: Move to permanent results directory.
+    - ***Inputs***: ```intermediate_files/covWAS/<IMPROPER|PROPER|UNMAPPED>.pvals.txt>```
+    - ***Outputs***: ```results/covWAS/<CHROMOSOME>.<IMPROPER|PROPER|UNMAPPED>.pvals.txt>```
