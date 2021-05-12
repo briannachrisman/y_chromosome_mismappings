@@ -18,8 +18,8 @@ ml parallel
 split_func() {
     #gunzip $1 # Note: We already did gunzip in another script.
     echo $1
-    txtfile=${1/.txt.gz/.txt}
-    sample=${txtfile/.unmapped.txt/}
+    sample=$1
+    txtfile=$1/$1.unmapped.txt
     if [ $(sed -n "1{/^$sample/p};q" $txtfile) ]; then
         echo "deleting first line"
         tail -n +2 "$txtfile" > "$txtfile.tmp" && mv "$txtfile.tmp" "$txtfile" # Remove first line of file (sample name), shouldn't have added this in the first place.
@@ -32,7 +32,7 @@ split_func() {
     
     # Add sample name to start of all files.
     echo "Adding sample name to split files"
-    for f in ${sample}.unmapped.*.txt; do 
+    for f in $sample/${sample}.unmapped.*.txt; do 
         echo $f
         sed  -i "1i $sample" $f
     done
@@ -46,7 +46,7 @@ export -f split_func
 N=$((SLURM_ARRAY_TASK_ID -1))
 N=$(printf "%03g" $N)
 #parallel -j $SLURM_CPUS_PER_TASK split_func ::: *$N.unmapped.txt
-for f in *$N.unmapped.txt; do
+for f in *$N; do
     split_func $f
 done
 
