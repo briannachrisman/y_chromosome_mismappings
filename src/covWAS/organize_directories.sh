@@ -12,19 +12,20 @@
 
 cd /home/groups/dpwall/briannac/y_chromosome_mismappings/intermediate_files/coverages
 while read SAMPLE _; do
-    echo "running" $SAMPLE
-    mkdir $SAMPLE
-    mv $SAMPLE.unmapped.txt.gz $SAMPLE/$SAMPLE.unmapped.txt.gz
-    mv $SAMPLE.unmapped.txt $SAMPLE/$SAMPLE.unmapped.txt
-    mv $SAMPLE.improper.txt.gz $SAMPLE/$SAMPLE.improper.txt.gz
-    mv $SAMPLE.improper.txt $SAMPLE/$SAMPLE.improper.txt
-    mv $SAMPLE.proper.txt.gz $SAMPLE/$SAMPLE.proper.txt.gz
-    mv $SAMPLE.proper.txt $SAMPLE/$SAMPLE.proper.txt
-    for i in {0..3217}; do
-        N=$(printf "%04g" $i)
-        mv $SAMPLE.unmapped.$N.txt $SAMPLE/$SAMPLE.unmapped.$N.txt
-        mv $SAMPLE.unmapped.$N.txt.gz $SAMPLE/$SAMPLE.unmapped.$N.txt.gz
-    done
+    if [ -f "$SAMPLE.unmapped.3217.txt" ] || [ -f "$SAMPLE.unmapped.3217.txt.gz" ]; then
+        echo "running" $SAMPLE
+        mkdir $SAMPLE
+        mv $SAMPLE.unmapped.txt.gz $SAMPLE/$SAMPLE.unmapped.txt.gz
+        mv $SAMPLE.unmapped.txt $SAMPLE/$SAMPLE.unmapped.txt
+        mv $SAMPLE.improper.txt.gz $SAMPLE/$SAMPLE.improper.txt.gz
+        mv $SAMPLE.improper.txt $SAMPLE/$SAMPLE.improper.txt
+        mv $SAMPLE.proper.txt.gz $SAMPLE/$SAMPLE.proper.txt.gz
+        mv $SAMPLE.proper.txt $SAMPLE/$SAMPLE.proper.txt
+        mv $SAMPLE.done $SAMPLE/$SAMPLE.done
+        for i in {0..3217}; do
+            N=$(printf "%04g" $i)
+            mv $SAMPLE.unmapped.$N.txt $SAMPLE/$SAMPLE.unmapped.$N.txt
+            #mv $SAMPLE.unmapped.$N.txt.gz $SAMPLE/$SAMPLE.unmapped.$N.txt.gz
+        done
+    fi    
 done < $MY_HOME/general_data/samples_and_batches.tsv
-
-

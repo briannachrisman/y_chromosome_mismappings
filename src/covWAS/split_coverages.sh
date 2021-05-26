@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --job-name=split_coverages
 #SBATCH --partition=owners
-#SBATCH --array=1-1000
+#SBATCH --array=12
 #SBATCH --output=/scratch/users/briannac/logs/split_coverages_%a.out
 #SBATCH --error=/scratch/users/briannac/logs/split_coverages_%a.err
 #SBATCH --time=40:00:00
@@ -14,29 +14,29 @@
 
 cd /home/groups/dpwall/briannac/y_chromosome_mismappings/intermediate_files/coverages/
 
-ml parallel 
 split_func() {
     #gunzip $1 # Note: We already did gunzip in another script.
     echo $1
     sample=$1
+    \rm $sample/sed*
     txtfile=$1/$1.unmapped.txt
     if [ $(sed -n "1{/^$sample/p};q" $txtfile) ]; then
         echo "deleting first line"
         tail -n +2 "$txtfile" > "$txtfile.tmp" && mv "$txtfile.tmp" "$txtfile" # Remove first line of file (sample name), shouldn't have added this in the first place.
     fi
+    
+    if [ ! -f $sample/${sample}.unmapped.3217.txt ]; then
+        echo "splitting file"
+        split -l 1000000 -d -a 4 --additional-suffix=.txt $txtfile ${txtfile/.txt/.} # Split into many 1M line files.
 
-    
-    echo "splitting file"
-    split -l 1000000 -d -a 4 --additional-suffix=.txt $txtfile ${txtfile/.txt/.} # Split into many 1M line files.
-        
-    
-    # Add sample name to start of all files.
-    echo "Adding sample name to split files"
-    for f in $sample/${sample}.unmapped.*.txt; do 
-        echo $f
-        sed  -i "1i $sample" $f
-    done
-    
+
+        # Add sample name to start of all files.
+        echo "Adding sample name to split files"
+        for f in $sample/${sample}.unmapped.*.txt; do 
+            echo $f
+            sed  -i "1i $sample" $f
+        done
+    fi
     echo "zipping back up to save space"
     gzip $txtfile # Zip back up to save some space.
 }
@@ -44,9 +44,9 @@ split_func() {
 export -f split_func
 
 N=$((SLURM_ARRAY_TASK_ID -1))
-N=$(printf "%03g" $N)
+N=$(printf "%01g" $N)
 #parallel -j $SLURM_CPUS_PER_TASK split_func ::: *$N.unmapped.txt
-for f in *$N; do
+for f in *LCL; do
     split_func $f
 done
 

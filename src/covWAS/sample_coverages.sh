@@ -81,37 +81,30 @@ do
     head -n $N $unfinished_samples_and_batches | tail -n 1 > $SCRATCH/tmp/tmp_coverages_$SLURM_ARRAY_TASK_ID.txt
     while read SAMPLE _; do
 
-        echo $SAMPLE 
-        
-        ################### Properly paired pileups.  ###################
-        echo "Counting properly paired..."
-        if [ ! -f "${intermediate_dir}/$SAMPLE.improper.txt.gz" ]; then
-            echo $SAMPLE > ${intermediate_dir}/$SAMPLE.proper.txt    
-             /oak/stanford/groups/dpwall/computeEnvironments/samtools-1.10/bin/samtools depth  s3://ihart-hg38/cram/${SAMPLE/_LCL/-LCL}.final.cram -aa -g 0x2 -G 0x400 -G 0x100 -G 0x200 | cut -f3  >>  ${intermediate_dir}/$SAMPLE.proper.txt    
-            gzip  -f ${intermediate_dir}/$SAMPLE.proper.txt
-        fi
-
+        echo $SAMPLE
+        cd $intermediate_dir/$SAMPLE
+        \rm *all*
         ################### Improperly paired pileups.  ###################
         echo "Counting improperly paired..."
-        if [ ! -f "${intermediate_dir}/$SAMPLE.unmapped.txt.gz" ]; then
-            echo $SAMPLE > ${intermediate_dir}/$SAMPLE.improper.txt    
-             /oak/stanford/groups/dpwall/computeEnvironments/samtools-1.10/bin/samtools depth  s3://ihart-hg38/cram/${SAMPLE/_LCL/-LCL}.final.cram -aa -G 0x2 -G 0x8 -G 0x400 -G 0x100 -G 0x200  | cut -f3  >> ${intermediate_dir}/$SAMPLE.improper.txt
-            gzip -f ${intermediate_dir}/$SAMPLE.improper.txt
-        fi
+        #if [ ! -f "${intermediate_dir}/$SAMPLE.unmapped.txt.gz" ]; then
+        #     /oak/stanford/groups/dpwall/computeEnvironments/samtools-1.10/bin/samtools depth  s3://ihart-hg38/cram/${SAMPLE/_LCL/-LCL}.final.cram -aa -G 0x2 -G 0x8 -G 0x400 -G 0x100 -G 0x200  | cut -f3  >> ${intermediate_dir}/$SAMPLE.improper.txt
+        #    gzip -f ${intermediate_dir}/$SAMPLE.improper.txt
+        #fi
 
 
         ################### Unmapped paired pileups.  ###################
-        echo "Counting unmapped..."
-        echo $SAMPLE > ${intermediate_dir}/$SAMPLE.unmapped.txt    
-         /oak/stanford/groups/dpwall/computeEnvironments/samtools-1.10/bin/samtools depth  s3://ihart-hg38/cram/${SAMPLE/_LCL/-LCL}.final.cram  -g 0x8 -G 0x400 -G 0x100 -G 0x200 -aa | cut -f3 >> ${intermediate_dir}/$SAMPLE.unmapped.txt
-        gzip -f ${intermediate_dir}/$SAMPLE.unmapped.txt
+        echo "Counting all..."
+         /oak/stanford/groups/dpwall/computeEnvironments/samtools-1.10/bin/samtools depth  s3://ihart-hg38/cram/${SAMPLE/_LCL/-LCL}.final.cram  -G 0x400 -G 0x100 -G 0x200 -aa | cut -f3 > ${intermediate_dir}/$SAMPLE.all.txt
+        #gzip -f ${intermediate_dir}/$SAMPLE.all.txt
+        
+        
         
         # When done with everything, write to done file.
         echo 'done' > ${intermediate_dir}/$SAMPLE.done
         
-        check_done_proper ${intermediate_dir}/$SAMPLE.proper.txt.gz
-        check_done_improper ${intermediate_dir}/$SAMPLE.improper.txt.gz
-        check_done_unmapped ${intermediate_dir}/$SAMPLE.unmapped.txt.gz
+        #check_done_proper ${intermediate_dir}/$SAMPLE.proper.txt.gz
+        #check_done_improper ${intermediate_dir}/$SAMPLE.improper.txt.gz
+        #check_done_unmapped ${intermediate_dir}/$SAMPLE.all.txt.gz
 
         
         \rm ${intermediate_file_dir}/${SAMPLE}*tmp*
