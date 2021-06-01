@@ -36,7 +36,7 @@ For nonproper:
     - **Inputs**: AWS ihart bams.
     - **Outputs**: ```intermediate_files/coverages/<SAMPLE>/<SAMPLE>.<IMPROPER|NONPROPER|ALL>.txt.gz>```
 
-2. ```concat_coverages.sh```: Concatenates together the coverages of all samples for each region of chromosome.
+2. ```concat_coverages.sh```: Concatenates together the coverages of all samples for each region of chromosome. **June 1, 2020 Running -- 1200 done**
    - **Inputs**: ```intermediate_files/coverages/<SAMPLE>/<SAMPLE>.<IMPROPER|NONPROPER|ALL>.<REGION>.txt```
    - **Outputs**: ```intermediate_files/coverages/<IMPROPER|NONPROPER|ALL>.<REGION>.tsv.gz```
 

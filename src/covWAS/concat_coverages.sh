@@ -16,7 +16,7 @@ for i in 1000 2000 3000 ; do
     N=$(printf "%04g" $N)
     
     if [ "$N" -lt 3218 ]; then
-    if [ ! -f $MY_HOME/y_chromosome_mismappings/results/coverages/all/coverages.all.$N.tsv.gz ]; then
+    if [ ! -f  $MY_HOME/y_chromosome_mismappings/intermediate_files/coverages/concat/all/coverages.all.$N.tsv.gz ]; then
         mkdir $MY_SCRATCH/tmp/y_chromosome_mismappings/$N
         idx=0
         while read SAMPLE BATCH; do
@@ -37,4 +37,3 @@ for i in 1000 2000 3000 ; do
     fi
 
 done
-
